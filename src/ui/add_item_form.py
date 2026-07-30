@@ -1,0 +1,85 @@
+import tkinter as tk 
+import tkinter.ttk as ttk 
+from src.classes.error_code import ErrorCode
+from src.classes.maintenance_type import MaintenanceType
+
+class AddItemPopup(tk.Toplevel):
+    def __init__(self, parent, type:str, title:str, fields:list|tuple, on_submit, obj:ErrorCode|MaintenanceType|None = None) -> None:
+        super().__init__(parent) 
+        self.title(title)
+        self.geometry("480x240")
+        self.type = type
+        
+        # Lock focus to this window
+        self.transient(parent)
+        self.grab_set()
+
+        # centering the content in the pop-up window 
+        self.rowconfigure(0, weight=1)
+        self.rowconfigure(4, weight=1)
+        
+        # making the only column to stretch for entire form
+        self.columnconfigure(0, weight=1)
+        
+        # put fields and buttons into the surrounding field_container
+        self.field_container = ttk.Frame(self)
+        self.field_container.grid(row=1, column=0)
+        
+        # configure grid layout to center the data entry horizontally   
+        self.field_container.columnconfigure(0, weight=1)
+        self.field_container.columnconfigure(4, weight=1)
+
+        self.entry_data = {} 
+        self.entries = {}
+
+        for i in range(len(fields)): 
+            ttk.Label(
+                self.field_container, anchor="w", text=fields[i], width=20
+            ).grid(row=i+1, column=2, padx=(10, 0))
+
+            entry = ttk.Entry(
+                self.field_container, width=30
+            )
+            entry.grid(row=i+1, column=3, padx=10)
+            self.entries[fields[i]] = entry
+            if obj is not None: 
+                entry.insert(0, str(obj.__dict__.get(fields[i])))
+        # create an additional containers to hold the buttons 
+        self.buttons_container = ttk.Frame(self)
+        self.buttons_container.grid(row=2, column=0)
+
+        # configure grid layout to center the content vertically and horizontally 
+        self.buttons_container.rowconfigure(0, weight=1)
+        self.buttons_container.rowconfigure(3, weight=1)
+        self.buttons_container.columnconfigure(0, weight=1)
+        self.buttons_container.columnconfigure(4, weight=1)
+
+        # create the buttons 
+        ttk.Button( 
+            self.buttons_container, 
+            text="Cancel", 
+            command=self._on_cancel   
+        ).grid(row=1, column=1, sticky="w", padx=(0, 20), pady=(20, 10))
+
+        ttk.Button(
+            self.buttons_container, 
+            text="Submit", 
+            command=lambda: self._on_submit(on_submit=on_submit, obj=obj)
+        ).grid(row=1, column=2, sticky="w", padx=(0, 20), pady=(20, 10))
+
+
+    def _on_cancel(self):
+        # close the widget
+        self.destroy()
+
+    def _on_submit(self,  on_submit, obj=None): 
+        # read the data from the Entry entities dynamically 
+        for item in self.entries.keys():
+            self.entry_data[item] = self.entries[item].get()
+
+        # passing it to the callback function 
+        on_submit(self.type, self.entry_data, obj) 
+
+        # close the widget
+        self.destroy()
+            

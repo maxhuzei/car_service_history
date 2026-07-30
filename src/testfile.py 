@@ -1,0 +1,121 @@
+import sqlite3 
+from classes.error_code import ErrorCode
+from classes.general_settings import GeneralSettings
+from classes.maintenance_type import MaintenanceType
+
+# with sqlite3.connect(r"car_service.db") as conn: 
+#     cursor = conn.cursor()
+#     cursor.execute(
+#         "select key, value from general_settings"
+#     )
+#     rows = dict(cursor.fetchall())
+#     print(rows)
+
+
+# general_settings = GeneralSettings()
+# print(general_settings)
+# print(general_settings.car_model)
+# print(general_settings.max_fuel_ammount)
+
+# error_code = ErrorCode.get_by_name('test26')
+# print(error_code)
+
+# error_code = ErrorCode.get_by_id(3)
+# print(error_code)
+
+
+# testing the error code class 
+# print("Checking the correct ID extraction!")
+# error_code = ErrorCode.get_by_id(1)
+# print(error_code)
+
+# print("Checking the extraction of the missing ErrorID")
+# error_code = ErrorCode.get_by_id(3)
+# print(error_code)
+
+# print("Checking the extraction of the correct name")
+# error_code = ErrorCode.get_by_name("test26")
+# print(error_code)
+
+# print("Checking the extraction by the incorrect name")
+# error_code = ErrorCode.get_by_name("test23")
+# print(error_code)
+
+# print("Instantiate the new error code object, save it to the database and extract it back")
+# error_code = ErrorCode(error_code="tes130", description='another test error code')
+# error_code.save()
+# error_code2 = ErrorCode.get_by_name('tes130')
+# print(error_code)
+# print(error_code2)
+
+# print("Update existing error code in the database")
+# error_code = ErrorCode.get_by_name("tes129")
+# error_code.error_code = 'test129'
+# error_code.save()
+
+# error_code2 = ErrorCode.get_by_name("test129")
+# print(error_code2)
+
+# print("Delete existing error code from the database")
+# error_code = ErrorCode.get_by_name("tes130")
+# print(error_code)
+# error_code.delete()
+# print(error_code)
+
+# error_code2 = ErrorCode.get_by_name("tes130")
+# print(error_code2)
+
+
+# print("Error code list")
+# error_code_list = ErrorCode.get_all()ы
+# for error_code in error_code_list:
+#     print(error_code.error_code)
+
+# testing the maintenance types methods
+# print("Test the instantiation of the new entry")
+
+# maint_type = MaintenanceType("regular service", "just a regular service")
+# print(maint_type)
+# maint_type.save()
+# print(maint_type)
+
+# maint_type2 = MaintenanceType.get_by_name("regular service")
+# print(maint_type2)
+
+# print("Test the get_by_name classmethod - failure")
+# maint_type = MaintenanceType.get_by_name('SomeOtherName')
+# print(maint_type)
+
+# print("Test the get_by_id class method - success")
+# maint_type = MaintenanceType.get_by_id(1)
+# print(maint_type)
+
+# print("Test the get_by_id classmethod - failure")
+# maint_type = MaintenanceType.get_by_id(3)
+# print(maint_type)
+
+# print("Test of editing the existing instance")
+# maint_type = MaintenanceType('other_service', "other service type")
+# maint_type.save()
+# print(maint_type)
+
+# maint_type = MaintenanceType.get_by_name("other_service")
+# maint_type.maintenance_type = 'other service'
+# maint_type.save()
+# print(maint_type)
+
+# print("testing of the deletion of the existing record")
+# maint_type = MaintenanceType('third_type', 'some description')
+# maint_type.save()
+# print(maint_type)
+# maint_type = MaintenanceType.get_by_name("third_type")
+# maint_type.delete()
+# print(maint_type)
+# print(MaintenanceType.get_by_name("third_type"))
+
+# print("Test of the extraction of all maintenance types list")
+# maint_type_list = MaintenanceType.get_all()
+# print(maint_type_list)
+
+error_codes_list = ErrorCode.get_all()
+print(error_codes_list)

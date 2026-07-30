@@ -4,10 +4,10 @@ from src.classes.error_code import ErrorCode
 from src.classes.maintenance_type import MaintenanceType
 
 class AddItemPopup(tk.Toplevel):
-    def __init__(self, parent, type:str, title:str, fields:list|tuple, on_submit, obj:ErrorCode|MaintenanceType|None = None) -> None:
+    def __init__(self, parent, type:str, title:str, fields:list|tuple|dict, on_submit, obj:ErrorCode|MaintenanceType|None = None) -> None:
         super().__init__(parent) 
         self.title(title)
-        self.geometry("480x240")
+        self.geometry("960x480")
         self.type = type
         
         # Lock focus to this window
@@ -32,18 +32,22 @@ class AddItemPopup(tk.Toplevel):
         self.entry_data = {} 
         self.entries = {}
 
-        for i in range(len(fields)): 
+        # Convert fields list to dict to avoid changing the old implementations 
+        fields_dict = self._convert_field_list(fields)
+
+        for i in range(len(fields_dict)): 
+            _key = list(fields_dict.keys())[i]
             ttk.Label(
-                self.field_container, anchor="w", text=fields[i], width=20
+                self.field_container, anchor="w", text=fields_dict[_key], width=20
             ).grid(row=i+1, column=2, padx=(10, 0))
 
             entry = ttk.Entry(
                 self.field_container, width=30
             )
             entry.grid(row=i+1, column=3, padx=10)
-            self.entries[fields[i]] = entry
+            self.entries[_key] = entry
             if obj is not None: 
-                entry.insert(0, str(obj.__dict__.get(fields[i])))
+                entry.insert(0, str(obj.__dict__.get(_key)))
         # create an additional containers to hold the buttons 
         self.buttons_container = ttk.Frame(self)
         self.buttons_container.grid(row=2, column=0)
@@ -82,4 +86,12 @@ class AddItemPopup(tk.Toplevel):
 
         # close the widget
         self.destroy()
-            
+
+    def _convert_field_list(self, fields:tuple|list|dict):
+        if isinstance(fields, (list, tuple)):
+            fields_dict = {}
+            for item in fields:
+                fields_dict[item] = item
+        else: 
+            fields_dict = fields 
+        return fields_dict

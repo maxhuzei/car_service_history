@@ -8,7 +8,7 @@ class MainApplication:
     def __init__(self, root: tk.Tk) -> None:
         self.root = root 
         self.root.title("Car Service History")
-        self.root.geometry("800x600")
+        self.root.geometry("1600x1200")
 
         # Configure root window grid so the container fills the window
         self.root.rowconfigure(0, weight=1)

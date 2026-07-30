@@ -75,8 +75,62 @@ class FuelRefillEntry(Record):
         return fuel_refill_entries
 
     def save(self): 
-        pass 
+        if self.id is None:
+            self.cursor.execute(
+                """
+                INSERT INTO fuel_refill_entries (
+                    refuel_date, 
+                    current_mileage, 
+                    refuel_amount,
+                    refuel_cost
+                ) VALUES (
+                ?, ?, ?, ?
+                )
+                RETURNING id
+                """, (
+                    datetime.isoformat(self.refuel_date),
+                    self.current_mileage,
+                    self.refuel_amount,
+                    self.refuel_cost
+                )
+            )
+            self.connection.commit()
+            extracted = self.cursor.fetchone()
+            self.id = extracted.get("id")
+
+        elif self.id is not None: 
+            self.cursor.execute(
+                """
+                UPDATE fuel_refill_entries SET
+                    refuel_date = ?,
+                    current_mileage = ?, 
+                    refuel_amount = ?, 
+                    refuel_cost = ?
+                WHERE id = ?
+                """,
+                (
+                    datetime.isoformat(self.refuel_date),
+                    self.current_mileage, 
+                    self.refuel_amount,
+                    self.refuel_cost,
+                    self.id
+                )
+            )
+            self.connection.commit()
+        else: 
+            raise ValueError("Object exists, but is not found in the database. Restart application or check the data integrity.")
 
     def delete(self): 
-        pass
+        if self.id is not None: 
+            self.cursor.execute(
+                """
+                DELETE FROM fuel_refill_entries
+                WHERE id = ? 
+                """, 
+                (self.id, )
+            )
+            self.connection.commit()
+            self.__dict__.clear()
+        else: 
+            self.__dict__.clear()
 

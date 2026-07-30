@@ -94,9 +94,9 @@ class FuelRefillEntry(Record):
                     self.refuel_cost
                 )
             )
-            self.connection.commit()
             extracted = self.cursor.fetchone()
-            self.id = extracted.get("id")
+            self.connection.commit()
+            self.id = extracted["id"]
 
         elif self.id is not None: 
             self.cursor.execute(

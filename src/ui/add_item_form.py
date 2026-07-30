@@ -2,9 +2,10 @@ import tkinter as tk
 import tkinter.ttk as ttk 
 from src.classes.error_code import ErrorCode
 from src.classes.maintenance_type import MaintenanceType
+from src.classes.fuel_reill_entry import FuelRefillEntry
 
 class AddItemPopup(tk.Toplevel):
-    def __init__(self, parent, type:str, title:str, fields:list|tuple|dict, on_submit, obj:ErrorCode|MaintenanceType|None = None) -> None:
+    def __init__(self, parent, type:str, title:str, fields:list|tuple|dict, on_submit, obj:ErrorCode|MaintenanceType|FuelRefillEntry|None = None) -> None:
         super().__init__(parent) 
         self.title(title)
         self.geometry("960x480")
@@ -38,7 +39,7 @@ class AddItemPopup(tk.Toplevel):
         for i in range(len(fields_dict)): 
             _key = list(fields_dict.keys())[i]
             ttk.Label(
-                self.field_container, anchor="w", text=fields_dict[_key], width=20
+                self.field_container, anchor="w", text=fields_dict[_key][0], width=20
             ).grid(row=i+1, column=2, padx=(10, 0))
 
             entry = ttk.Entry(
@@ -91,7 +92,7 @@ class AddItemPopup(tk.Toplevel):
         if isinstance(fields, (list, tuple)):
             fields_dict = {}
             for item in fields:
-                fields_dict[item] = item
+                fields_dict[item] = [item, 'str']
         else: 
             fields_dict = fields 
         return fields_dict

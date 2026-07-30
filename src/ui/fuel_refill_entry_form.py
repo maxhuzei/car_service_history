@@ -1,5 +1,8 @@
 import tkinter as tk 
 import tkinter.ttk as ttk
+from dateutil import parser
+from src.ui.add_item_form import AddItemPopup
+from src.classes.fuel_reill_entry import FuelRefillEntry
 
 class FuelRefillForm(tk.Frame): 
     def __init__(self, root, controller): 
@@ -43,7 +46,8 @@ class FuelRefillForm(tk.Frame):
 
         add_new_btn = ttk.Button(
             buttons_frame, 
-            text="Add New Fuel Refill"
+            text="Add New Fuel Refill",
+            command=lambda: self._call_add_update_item_popup(upd=False)
         )
         add_new_btn.grid(row=0, column=0, padx=(0, 10), sticky='w')
 
@@ -99,3 +103,40 @@ class FuelRefillForm(tk.Frame):
         )
         vsb.grid(row=0, column=1, sticky='w')
         self.fuel_refill_tree.configure(yscrollcommand=vsb.set)
+
+    def _call_add_update_item_popup(self, upd:bool=False):
+        parent = self
+        type = 'fuel_entry'
+        fields_list = {
+            "refuel_date": ["Refuel Date", 'date'],
+            "current_mileage": ["Current Mileage", "str"],
+            "refuel_amount": ["Refuel Amount", "str"],
+            "refuel_cost": ["Refuel Cost", "str"]
+        }
+
+        if not upd:
+            title = "Add New Fuel Refill" 
+            AddItemPopup(
+                parent=parent,
+                type=type, 
+                title=title,
+                fields=fields_list,
+                on_submit=self._add_update_item_callback
+                )
+
+    def _add_update_item_callback(self, type, entry_data, obj:FuelRefillEntry|None=None):
+        if obj is None: 
+            refill = FuelRefillEntry(
+                parser.parse(entry_data['refuel_date']),
+                entry_data["current_mileage"],
+                entry_data["refuel_amount"], 
+                entry_data["refuel_cost"]
+            )
+            refill.save()
+        else: 
+            refill = obj
+            refill.refuel_date = parser.parse(entry_data["refuel_date"])
+            refill.current_mileage = entry_data["current_mileage"]
+            refill.refuel_amount = entry_data["refuel_amount"]
+            refill.refuel_cost = entry_data["refuel_cost"]
+        refill.save()

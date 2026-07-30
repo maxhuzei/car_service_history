@@ -2,7 +2,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from src.ui.home_form import HomeForm
 from src.ui.settings_form import SettingsForm
-from src.ui.fuel_refill_entry import FuelRefillForm
+from src.ui.fuel_refill_entry_form import FuelRefillForm
 
 class MainApplication: 
     def __init__(self, root: tk.Tk) -> None:

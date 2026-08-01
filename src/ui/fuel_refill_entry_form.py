@@ -104,6 +104,8 @@ class FuelRefillForm(tk.Frame):
         vsb.grid(row=0, column=1, sticky='w')
         self.fuel_refill_tree.configure(yscrollcommand=vsb.set)
 
+        self._construct_catalog_table(self.fuel_refill_tree, FuelRefillEntry)
+
     def _call_add_update_item_popup(self, upd:bool=False):
         parent = self
         type = 'fuel_entry'
@@ -140,3 +142,19 @@ class FuelRefillForm(tk.Frame):
             refill.refuel_amount = entry_data["refuel_amount"]
             refill.refuel_cost = entry_data["refuel_cost"]
         refill.save()
+        self._construct_catalog_table(self.fuel_refill_tree, FuelRefillEntry)
+
+
+    def _construct_catalog_table(self, tree_obj:ttk.Treeview, class_obj: type[FuelRefillEntry]) -> None:
+        for item in tree_obj.get_children():
+            tree_obj.delete(item)
+
+        for item in class_obj.get_all(): 
+            tree_obj.insert(
+                "", 'end', values=(item.id, 
+                                   item.refuel_date, 
+                                   item.current_mileage,
+                                   item.refuel_amount,
+                                   item.refuel_cost,
+                                   item.avg_consumption)
+            )

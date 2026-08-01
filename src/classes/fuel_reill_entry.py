@@ -65,11 +65,11 @@ class FuelRefillEntry(Record):
         for row in extracted: 
             fuel_refill_entries.append(
                 cls(
-                    id=int(row.get('id')), 
-                    refuel_date = datetime.fromisoformat(row.get('refuel_date')),
-                    current_mileage = int(row.get('current_mileage')),
-                    refuel_amount = int(row.get('refuel_amount')), 
-                    refuel_cost = float(row.get('refuel_cost'))
+                    id=int(row['id']), 
+                    refuel_date = datetime.fromisoformat(row['refuel_date']),
+                    current_mileage = int(row['current_mileage']),
+                    refuel_amount = int(row['refuel_amount']), 
+                    refuel_cost = float(row['refuel_cost'])
                 )
             )
         return fuel_refill_entries

@@ -149,12 +149,12 @@ class FuelRefillForm(tk.Frame):
         for item in tree_obj.get_children():
             tree_obj.delete(item)
 
-        for item in class_obj.get_all(): 
+        for item in class_obj.get_all()[::-1]: 
             tree_obj.insert(
                 "", 'end', values=(item.id, 
                                    item.refuel_date, 
                                    item.current_mileage,
                                    item.refuel_amount,
                                    item.refuel_cost,
-                                   item.avg_consumption)
+                                   item.calculate_consumption())
             )

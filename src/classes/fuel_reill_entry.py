@@ -4,14 +4,14 @@ from src.classes.db_record import Record
 from datetime import datetime
 
 class FuelRefillEntry(Record):
-    def __init__(self, refuel_date:datetime, current_mileage:int, refuel_amount:int, refuel_cost:float, avg_consumption:float|None=None, id:int|None=None):
+    def __init__(self, refuel_date:datetime, current_mileage:int, refuel_amount:int, refuel_cost:float, id:int|None=None):
         super().__init__()
+
         self.id = id
         self.refuel_date = refuel_date
         self.current_mileage = current_mileage
         self.refuel_amount = refuel_amount
         self.refuel_cost = refuel_cost
-        self.avg_consumption = avg_consumption
 
     def __str__(self) -> str:
         return f"id:{self.id}, refuel date:{self.refuel_date}, current_mileage:{self.current_mileage}, refuel_amount:{self.refuel_amount}, refuel_cost:{self.refuel_cost}"
@@ -134,3 +134,47 @@ class FuelRefillEntry(Record):
         else: 
             self.__dict__.clear()
 
+    @classmethod
+    def previous_refuel(cls, refuel_date:datetime|None): 
+        # for the add item data validation
+        if refuel_date  is None: 
+            filter_string = ""
+            parameters = ()
+
+        # for the other cases
+        if refuel_date is not None: 
+            filter_string = "WHERE refuel_date <= ?"
+            parameters = (refuel_date.isoformat(), )
+
+        cursor = cls.get_db_cursor()
+        cursor.execute(
+            f"""
+            SELECT 
+                id, 
+                refuel_date, 
+                current_mileage,
+                refuel_amount,
+                refuel_cost
+            FROM fuel_refill_entries
+            {filter_string}
+            ORDER BY refuel_date DESC
+            LIMIT 1
+            """,
+            parameters
+        )
+
+        extracted = cursor.fetchone()
+        return cls(
+                id=int(extracted['id']), 
+                refuel_date = datetime.fromisoformat(extracted['refuel_date']),
+                current_mileage = int(extracted['current_mileage']),
+                refuel_amount = int(extracted['refuel_amount']), 
+                refuel_cost = float(extracted['refuel_cost'])
+            )
+
+    def calculate_consumption(self): 
+        previous = FuelRefillEntry.previous_refuel(self.refuel_date)
+        distance_traveled = self.current_mileage - previous.current_mileage
+        if distance_traveled <= 0: 
+            return "Bullshit" 
+        return round(self.refuel_amount / distance_traveled * 100, 2)

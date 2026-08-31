@@ -39,10 +39,10 @@ class FuelRefillEntry(Record):
         extracted = cursor.fetchone()
         return cls(
             id = extracted['id'],
-            refuel_date = datetime.fromisoformat(extracted.get('refuel_date')), 
-            current_mileage = int(extracted.get('current_mileage')),
-            refuel_amount = int(extracted.get('refuel_amount')),
-            refuel_cost = float(extracted.get('refuel_cost'))
+            refuel_date = datetime.fromisoformat(extracted['refuel_date']), 
+            current_mileage = int(extracted['current_mileage']),
+            refuel_amount = int(extracted['refuel_amount']),
+            refuel_cost = float(extracted['refuel_cost'])
         )
 
     @classmethod
@@ -57,6 +57,7 @@ class FuelRefillEntry(Record):
                 refuel_amount, 
                 refuel_cost
             FROM fuel_refill_entries
+            ORDER BY refuel_date
             """
         )
 

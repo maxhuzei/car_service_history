@@ -3,6 +3,7 @@ import tkinter.ttk as ttk
 from dateutil import parser
 from src.ui.add_item_form import AddItemPopup
 from src.classes.fuel_reill_entry import FuelRefillEntry
+from tkinter import messagebox 
 
 class FuelRefillForm(tk.Frame): 
     def __init__(self, root, controller): 
@@ -11,7 +12,7 @@ class FuelRefillForm(tk.Frame):
         self.columnconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
         # Injecting the FuelRefillEntry class TODO - add when class will be created
-        # self.fuel_refill = 
+        self.fuel_refill = FuelRefillEntry
 
         # create and place the main menu frame 
         self.main_menu_frame = tk.Frame(self) 
@@ -53,7 +54,8 @@ class FuelRefillForm(tk.Frame):
 
         update_item_btn = ttk.Button(
             buttons_frame,
-            text="Update Fuel Refill"
+            text="Update Fuel Refill", 
+            command=lambda: self._call_add_update_item_popup(upd=True)
         )
         update_item_btn.grid(row=0, column=1, padx=(0,10), sticky='w')
 
@@ -126,6 +128,33 @@ class FuelRefillForm(tk.Frame):
                 on_submit=self._add_update_item_callback
                 )
 
+        if upd:
+            # validate if exactly one item is selected, inform user otherwise
+            selected_items = self.fuel_refill_tree.selection()
+            if len(selected_items) <= 0: 
+                messagebox.showinfo(
+                    title="Notification",
+                    message="Select item to be modified!"
+                )
+                
+            elif len(selected_items) > 1: 
+              messagebox.showinfo(
+                  title="Notification", 
+                  message="Cannot update more then 1 item at once!"
+              )  
+            else:             
+                title = "Update fuel refill entry"
+                item_id = int(self.fuel_refill_tree.item(selected_items[0], 'values')[0])
+                obj = self.fuel_refill.get_by_id(item_id)
+                AddItemPopup(
+                    parent=parent,
+                    type=type, 
+                    title=title,
+                    fields=fields_list,
+                    on_submit=self._add_update_item_callback,
+                    obj=obj
+                    )
+
     def _add_update_item_callback(self, type, entry_data, obj:FuelRefillEntry|None=None):
         if obj is None: 
             refill = FuelRefillEntry(
@@ -152,7 +181,7 @@ class FuelRefillForm(tk.Frame):
         for item in class_obj.get_all()[::-1]: 
             tree_obj.insert(
                 "", 'end', values=(item.id, 
-                                   item.refuel_date, 
+                                   item.refuel_date.date(), 
                                    item.current_mileage,
                                    item.refuel_amount,
                                    item.refuel_cost,

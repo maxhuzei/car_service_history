@@ -61,7 +61,8 @@ class FuelRefillForm(tk.Frame):
 
         delete_item_btn = ttk.Button(
             buttons_frame,
-            text="Delete Fuel Refill"
+            text="Delete Fuel Refill",
+            command=self._delete_items
         )
         delete_item_btn.grid(row=0, column=2, padx=(0,10), sticky='w')
 
@@ -172,6 +173,31 @@ class FuelRefillForm(tk.Frame):
             refill.refuel_cost = entry_data["refuel_cost"]
         refill.save()
         self._construct_catalog_table(self.fuel_refill_tree, FuelRefillEntry)
+
+    def _delete_items(self):
+        table_item_ids = self.fuel_refill_tree.selection()
+        if len(table_item_ids) > 0: 
+            confirm = messagebox.askokcancel(
+                title="Confirm deletion",
+                message="Are you sure you want to delete the selected items?",
+                icon="warning"
+            )
+
+            if not confirm:
+                return 
+        else:
+            messagebox.showinfo(
+                title="No item selected!",
+                message="Select an item to be deleted!"
+            )
+            return
+
+        for item in table_item_ids: 
+            item_id = int(self.fuel_refill_tree.item(item, 'values')[0])
+            obj = self.fuel_refill.get_by_id(item_id)
+            obj.delete()
+
+        self._construct_catalog_table(self.fuel_refill_tree, self.fuel_refill)
 
 
     def _construct_catalog_table(self, tree_obj:ttk.Treeview, class_obj: type[FuelRefillEntry]) -> None:

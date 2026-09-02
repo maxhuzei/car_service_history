@@ -3,6 +3,7 @@ import tkinter.ttk as ttk
 from src.ui.home_form import HomeForm
 from src.ui.settings_form import SettingsForm
 from src.ui.fuel_refill_entry_form import FuelRefillForm
+from src.ui.maintenance_entry_form import MaintenanceEntryForm
 
 class MainApplication: 
     def __init__(self, root: tk.Tk) -> None:
@@ -17,7 +18,8 @@ class MainApplication:
         self.forms = {
              "home": HomeForm, 
              "settings": SettingsForm,
-             "fuel_refill": FuelRefillForm
+             "fuel_refill": FuelRefillForm,
+             "maintenance_entry": MaintenanceEntryForm
         }
 
         self.container = ttk.Frame(root)

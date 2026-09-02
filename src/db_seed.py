@@ -140,6 +140,44 @@ def create_fuel_refill_entries(connection:sqlite3.Connection) -> None:
     except:
         raise
 
+def create_maintenance_entries(connection:sqlite3.Connection) -> None:
+    try:
+        if not check_if_table_exists(connection, 'maintenance_entries'):
+            cursor = connection.cursor()
+            cursor.execute(
+                """
+                CREATE TABLE maintenance_entries(
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    maintenance_event TEXT, 
+                    dtc_code TEXT, 
+                    symptoms TEXT, 
+                    comment TEXT, 
+                    cost REAL,
+                    date_created TEXT
+                )
+                """
+            )
+            connection.commit()
+            print("Table maintenance_entries has been successfully initialized!")
+        else: 
+            # migration for the databases created before the date_created column
+            cursor = connection.cursor()
+            cursor.execute(
+                """
+                SELECT COUNT(*)
+                FROM pragma_table_info('maintenance_entries')
+                WHERE name = 'date_created'
+                """
+            )
+            if cursor.fetchone()[0] == 0:
+                cursor.execute(
+                    "ALTER TABLE maintenance_entries ADD COLUMN date_created TEXT"
+                )
+                connection.commit()
+                print("Column date_created has been added to the maintenance_entries table!")
+    except:
+        raise
+
 def intialize_db() -> None: 
     db_path = get_db_path(r".config")
     connection = sqlite3.connect(db_path)
@@ -147,5 +185,6 @@ def intialize_db() -> None:
     create_error_codes(connection)
     create_maitenance_types(connection)
     create_fuel_refill_entries(connection)
+    create_maintenance_entries(connection)
 
 intialize_db()

@@ -36,7 +36,8 @@ class HomeForm(ttk.Frame):
         self.fuel_button.grid(row=1, column=0, padx=10)
 
         self.maintenance_button = ttk.Button(
-            center_frame, text="Maintenance Entry"
+            center_frame, text="Maintenance Entry",
+            command=lambda: self.controller.switch_form("maintenance_entry")
         )
         self.maintenance_button.grid(row=1, column=1, padx=10)
 

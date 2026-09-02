@@ -143,8 +143,8 @@ class FuelRefillEntry(Record):
             parameters = ()
 
         # for the other cases
-        if refuel_date is not None: 
-            filter_string = "WHERE refuel_date <= ?"
+        if refuel_date is not None:  
+            filter_string = "WHERE refuel_date < ?"
             parameters = (refuel_date.isoformat(), )
 
         cursor = cls.get_db_cursor()
@@ -171,11 +171,19 @@ class FuelRefillEntry(Record):
                 current_mileage = int(extracted['current_mileage']),
                 refuel_amount = int(extracted['refuel_amount']), 
                 refuel_cost = float(extracted['refuel_cost'])
-            )
+            ) if extracted is not None else None
 
     def calculate_consumption(self): 
         previous = FuelRefillEntry.previous_refuel(self.refuel_date)
-        distance_traveled = self.current_mileage - previous.current_mileage
-        if distance_traveled <= 0: 
-            return "Bullshit" 
-        return round(self.refuel_amount / distance_traveled * 100, 2)
+        if previous:
+            distance_traveled = self.current_mileage - previous.current_mileage
+        else: 
+            distance_traveled = 0
+        if distance_traveled > 0: 
+            average_consumption = round(self.refuel_amount / distance_traveled * 100, 2)
+        elif distance_traveled == 0: 
+            average_consumption = 0
+        else: 
+            average_consumption = "Bullshit"
+
+        return average_consumption

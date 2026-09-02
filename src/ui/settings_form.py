@@ -153,13 +153,13 @@ class SettingsForm(ttk.Frame):
         
         self.update_maintenance_type_btn = ttk.Button(
             btn_frame, 
-            text="Update Error Code",
+            text="Update Maintenance Type",
             command=lambda: self._call_add_update_item_popup(upd=True)
         )
         self.update_maintenance_type_btn.pack(side=tk.LEFT, padx=(0, 10))
 
         self.delete_maintenance_type_btn = ttk.Button(
-            btn_frame, text="Delete Error Code", command=self._delete_item_from_table
+            btn_frame, text="Delete Maintenance Type", command=self._delete_item_from_table
         )
         self.delete_maintenance_type_btn.pack(side=tk.LEFT, padx=(0, 10))
 

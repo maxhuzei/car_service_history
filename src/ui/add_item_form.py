@@ -10,7 +10,7 @@ class AddItemPopup(tk.Toplevel):
     def __init__(self, parent, type:str, title:str, fields:list|tuple|dict, on_submit, obj:ErrorCode|MaintenanceType|FuelRefillEntry|MaintenanceEntry|None = None) -> None:
         super().__init__(parent) 
         self.title(title)
-        self.geometry("960x480")
+        self.geometry("1240x480")
         self.type = type
         
         # Lock focus to this window
@@ -47,7 +47,7 @@ class AddItemPopup(tk.Toplevel):
 
             ttk.Label(
                 self.field_container, anchor="w", text=_label, width=20
-            ).grid(row=i+1, column=2, padx=(10, 0))
+            ).grid(row=i+1, column=2, padx=(20, 0))
 
             if _field_type == 'dropdown':
                 # dropdown selection, e.g. items from a catalog
@@ -72,7 +72,7 @@ class AddItemPopup(tk.Toplevel):
                 if obj is not None: 
                     entry.insert(0, str(obj.__dict__.get(_key)))
 
-            entry.grid(row=i+1, column=3, padx=10)
+            entry.grid(row=i+1, column=3, padx=20)
             self.entries[_key] = entry
         # create an additional containers to hold the buttons 
         self.buttons_container = ttk.Frame(self)

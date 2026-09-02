@@ -65,7 +65,7 @@ class MaintenanceType(Record):
             extracted = self.cursor.fetchone()
             self.connection.commit()
             self.id = extracted['id']
-            print(MaintenanceType.get_by_name(self.maintenance_type))
+
         elif self.id:
             self.cursor.execute(
                 """

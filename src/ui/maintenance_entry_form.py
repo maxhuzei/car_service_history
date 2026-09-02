@@ -3,6 +3,7 @@ import tkinter.ttk as ttk
 from src.ui.add_item_form import AddItemPopup
 from src.classes.maintenance_entry import MaintenanceEntry
 from src.classes.maintenance_type import MaintenanceType
+from src.classes.error_code import ErrorCode
 from tkinter import messagebox 
 
 class MaintenanceEntryForm(tk.Frame): 
@@ -115,9 +116,10 @@ class MaintenanceEntryForm(tk.Frame):
         parent = self
         type = 'maintenance_entry'
         maintenance_types = [mt.maintenance_type for mt in MaintenanceType.get_all()]
+        error_codes = [ec.error_code for ec in ErrorCode.get_all()]
         fields_list = {
             "maintenance_event": ["Maintenance Type", "dropdown", maintenance_types],
-            "dtc_code": ["DTC Code", "str", 5],
+            "dtc_code": ["DTC Code", "dropdown", error_codes],
             "symptoms": ["Symptoms", "str", 500],
             "comment": ["Comment", "str", 500],
             "cost": ["Cost", "float"]
@@ -169,7 +171,7 @@ class MaintenanceEntryForm(tk.Frame):
         # data entry validation
         if not maintenance_event: 
             raise ValueError("Maintenance type must be selected from the catalog!")
-        if len(dtc_code) > 5: 
+        if len(dtc_code) > 6: 
             raise ValueError("DTC code cannot be longer than 5 symbols!")
         if len(symptoms) > 500: 
             raise ValueError("Symptoms cannot be longer than 500 symbols!")
